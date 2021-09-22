@@ -10,6 +10,13 @@
       <uuid>3bdab429-d4fc-4471-b238-52855e5a39fe</uuid>
     </artifact>
     <artifact>
+      <groupId>junit</groupId>
+      <artifactId>broken-junit</artifactId>
+      <version>SYSTEM</version>
+      <path>@@@/../../src/test/resources/broken-junit.jar</path>
+      <uuid>10703b24-d890-4ff5-bdf0-89f7131b1b2d</uuid>
+    </artifact>
+    <artifact>
       <groupId>xpp3</groupId>
       <artifactId>xpp3</artifactId>
       <version>SYSTEM</version>
