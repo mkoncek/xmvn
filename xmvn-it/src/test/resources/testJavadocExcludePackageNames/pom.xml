@@ -22,14 +22,9 @@
       <plugin>
         <groupId>org.fedoraproject.xmvn</groupId>
         <artifactId>xmvn-mojo</artifactId>
-          <configuration>
-              <!-- Exclude fully-qualified classes matching either one of:
-              - a.*
-              - *.x
-              - c/y.*
-              -->
-            <javadocExcludePackagesRegex>^(?:a.*$)|(?:.*x/[^/]*$)|(c/y/[^/]*$)</javadocExcludePackagesRegex>
-          </configuration>
+        <configuration>
+          <excludePackageNames>a.*,*.x;c.y:c.z</excludePackageNames>
+        </configuration>
       </plugin>
     </plugins>
   </build>

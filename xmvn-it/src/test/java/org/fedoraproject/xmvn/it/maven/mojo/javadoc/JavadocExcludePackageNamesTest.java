@@ -29,22 +29,22 @@ import org.fedoraproject.xmvn.it.maven.mojo.AbstractMojoIntegrationTest;
  * 
  * @author Marian Koncek
  */
-public class JavadocExcludePackagesRegexTest
+public class JavadocExcludePackageNamesTest
     extends AbstractMojoIntegrationTest
 {
     @Test
-    public void testJavadocExcludePackagesRegex()
+    public void testJavadocExcludePackageNames()
         throws Exception
     {
         performTest( "org.fedoraproject.xmvn:xmvn-mojo:javadoc" );
 
         assertTrue( Files.isDirectory( Paths.get( "target/xmvn-apidocs/b/y" ) ) );
         assertTrue( Files.isDirectory( Paths.get( "target/xmvn-apidocs/b/z" ) ) );
-        assertTrue( Files.isDirectory( Paths.get( "target/xmvn-apidocs/c/z" ) ) );
 
         assertTrue( Files.notExists( Paths.get( "target/xmvn-apidocs/a" ) ) );
         assertTrue( Files.notExists( Paths.get( "target/xmvn-apidocs/b/x" ) ) );
         assertTrue( Files.notExists( Paths.get( "target/xmvn-apidocs/c/x" ) ) );
         assertTrue( Files.notExists( Paths.get( "target/xmvn-apidocs/c/y" ) ) );
+        assertTrue( Files.notExists( Paths.get( "target/xmvn-apidocs/c/z" ) ) );
     }
 }

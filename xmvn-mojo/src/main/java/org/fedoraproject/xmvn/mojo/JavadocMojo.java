@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -96,8 +95,8 @@ public class JavadocMojo
     @Parameter( defaultValue = "${maven.compiler.release}" )
     private String release;
 
-    @Parameter( property = "javadocExcludePackagesRegex" )
-    private String javadocExcludePackagesRegex;
+    @Parameter( property = "excludePackageNames" )
+    private String excludePackageNames;
 
     private static String quoted( Object obj )
     {
@@ -110,8 +109,6 @@ public class JavadocMojo
     private Set<Path> findFiles( Collection<Path> dirs, String regex )
         throws IOException
     {
-        Optional<Pattern> excludedPackages = Optional.ofNullable( javadocExcludePackagesRegex ).map( Pattern::compile );
-
         Set<String> compileSourceRoots = new LinkedHashSet<>();
 
         for ( MavenProject project : session.getAllProjects() )
@@ -122,6 +119,8 @@ public class JavadocMojo
         Pattern pattern = Pattern.compile( regex );
         Set<Path> found = new LinkedHashSet<>();
 
+        System.out.println( "asdasasdasdasd" );
+
         for ( Path dir : dirs )
         {
             try ( Stream<Path> stream = Files.find( dir, Integer.MAX_VALUE, //
@@ -130,14 +129,49 @@ public class JavadocMojo
             {
                 stream.filter( ( sourceFile ) ->
                 {
+                    if ( excludePackageNames == null )
+                    {
+                        return true;
+                    }
+
+                    String[] excludedPackages = excludePackageNames.split( "[,;:]" );
+
                     for ( String sourceRoot : compileSourceRoots )
                     {
-                        if ( sourceFile.startsWith( sourceRoot ) && excludedPackages.isPresent()
-                            && excludedPackages.get().matcher( Paths.get( sourceRoot ).relativize( sourceFile ).toString() ).matches() )
+                        Path parent = Paths.get( sourceRoot ).relativize( sourceFile ).getParent();
+
+                        if ( parent != null )
                         {
-                            return false;
+                            String className = parent.toString().replace( '/', '.' );
+
+                            for ( String excludePattern : excludedPackages )
+                            {
+                                if ( !excludePattern.isEmpty() )
+                                {
+                                    if ( excludePattern.charAt( 0 ) == '*' )
+                                    {
+                                        if ( className.endsWith( excludePattern.substring( 1 ) ) )
+                                        {
+                                            return false;
+                                        }
+                                    }
+                                    else if ( excludePattern.charAt( excludePattern.length() - 1 ) == '*' )
+                                    {
+                                        if ( className.startsWith( excludePattern.substring( 0, excludePattern.length()
+                                            - 1 ) ) )
+                                        {
+                                            return false;
+                                        }
+                                    }
+                                    else if ( className.equals( excludePattern ) )
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
                         }
                     }
+
                     return true;
                 } ).forEach( found::add );
             }
